@@ -100,17 +100,38 @@
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
-    var result = _.filter(collection, test);
     //find diff collection and result
+    var result = [];
+    var filtered = _.filter(collection, test);
+    for (var i = 0; i < collection.length; i++) {
+      if (_.indexOf(filtered, collection[i]) < 0){
+        result.push(collection[i]);
+      }
+    }
+    return result;
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
+    var result = [];
+    for (var i = 0; i < array.length; i++){
+      if (i === 0){
+        result.push(array[i]);
+      } else if (_.indexOf(result, array[i]) < 0){
+        result.push(array[i]);
+      }
+    }
+    return result;
   };
 
 
   // Return the results of applying an iterator to each element.
   _.map = function(collection, iterator) {
+    var result = [];
+    _.each(collection, function(item, index) {
+      result.push(iterator(item));
+    });
+    return result;
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
@@ -155,6 +176,12 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    var memo = accumulator === undefined ? collection[0] : accumulator;
+    var i = accumulator === undefined ? 1 : 0;
+    for (; i < collection.length; i++){
+      memo = iterator(memo, collection[i]);
+    }
+    return memo;
   };
 
   // Determine if the array or object contains a given value (using `===`).
