@@ -176,13 +176,15 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
-    var memo = accumulator === undefined ? collection[0] : accumulator;
+    var keys = Object.keys(collection); 
+    var memo = accumulator === undefined ? collection[keys[0]] : accumulator;
     var i = accumulator === undefined ? 1 : 0;
-    for (; i < collection.length; i++){
-      memo = iterator(memo, collection[i]);
+    for (; i < keys.length; i++){
+      memo = iterator(memo, collection[keys[i]]);
     }
     return memo;
   };
+
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
@@ -199,13 +201,32 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function(check, item) {
+      if (check === false) { 
+        return false; 
+      }
+      if (iterator) {
+        return iterator(item) ? true : false;
+      } else {
+        return item ? true : false;
+      }
+    }, true);
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    return _.reduce(collection, function(check, item) {
+      if (check === true) {
+        return true;
+      }
+      if (iterator) {
+        return iterator(item) ? true : false;
+      } else {
+        return item ? true : false;
+      }
+    }, false);
   };
 
 
@@ -228,11 +249,26 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+   for (var i = 1; i < arguments.length; i++){
+    for (var prop in arguments[i]){
+      obj[prop] = arguments[i][prop];
+    }
+   }
+   return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    //garr 
+   for (var i = 1; i < arguments.length; i++){
+     for (var prop in arguments[i]){
+       if (obj[prop] === undefined) {
+         obj[prop] = arguments[i][prop];
+       }
+     }
+   }
+   return obj;
   };
 
 
