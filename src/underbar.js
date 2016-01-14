@@ -312,6 +312,30 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var argsList = [];
+    var result;
+    var argsCalled = false;
+    
+    return function() {
+      
+      _.each(argsList, function(argGroup){
+        _.each(argGroup, function(item, index){
+          if (item === arguments[index]){
+            argsCalled = true;
+          } else {
+            argsCalled = false;
+          }
+        }); 
+      });
+
+      if (!argsCalled) {
+        result = func.apply(this, arguments);
+        argsList.push(arguments);
+        argsCalled = false;
+      }
+
+      return result;
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -321,7 +345,13 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
-  };
+    //parse out later arguments
+    var extraArgs = {};
+    _.each(arguments, function(item, index){ 
+      if (index > 1) { extraArgs[""+ index] = item; }
+    });
+    setTimeout(function(){ func(extraArgs["2"], extraArgs["3"]); }, wait);  
+  }; //come back and fix this so it can take many arguments, not just 2
 
 
   /**
@@ -335,6 +365,18 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var arr = array.slice();
+    var i = 0;
+    var finalArray = [];
+    var randIndex;
+
+    while (arr.length > 0){
+      randIndex = Math.floor(Math.random() * arr.length);
+      finalArray[i] = arr.splice(randIndex, 1)[0];
+      i++;
+    }
+
+    return finalArray;
   };
 
 
